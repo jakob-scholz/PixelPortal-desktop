@@ -3,33 +3,22 @@
 
 #include "Globals.h"
 
-uint8_t fps = 30;
-uint8_t level = 1;
-uint8_t finalLevel = 10;
-
-//Cada portal una línea, con info de dirección y de destino.
-// PARA RECORRERLOS: for (byte i = 0; i < sizeof(myStr) - 1; i++) {
-uint8_t portals[8][6] = { { 0, 0, 1, 0,0,0 },
-                      { 0, 0, 1, 0,0,0 },
-                      { 0, 0, 0, 0,0,0 },
-                      { 0, 0, 0, 0,0,0 },
-                      { 0, 0, 0, 0,0,0 },
-                      { 0, 0, 0, 0,0,0 },
-                      { 0, 0, 0, 0,0,0 },
-                      { 0, 0, 0, 0,0,0 } };
+// List of portals
+// x, y, type, dest, motion, distance
+uint8_t portals[8][6] = { 
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0 } 
+};
 
 int wave = 0;
-int portalActual = -1;
-uint8_t portalCoolDown = 0;
 uint8_t dest = 0;
 
-uint8_t door[] = {0,0};
-bool openDoor = false;
-
-uint8_t key[] = { 0 , 0 };
-bool keyTaken = false;
-
-uint8_t jumpCounter=0;
 uint8_t finalState = 12;
 
 void setup()
@@ -41,11 +30,12 @@ void setup()
 
 void loop()
 {
-  // pause render until it's time for the next frame
   if (!(arduboy.nextFrame())){
     return;
   }
+  
   arduboy.pollButtons();
+  
   if (gameState==GameState::MainMenu){
     titleScreen();
     if(arduboy.justPressed(A_BUTTON) or arduboy.justPressed(UP_BUTTON)){
@@ -54,21 +44,21 @@ void loop()
       arduboy.clear();
     }
   }
+  
   if(gameState==GameState::Game){
     arduboy.clear();
-    drawMap(level);
-    player.oldvy=player.vy;
-    updateP();
-    portalActual = inPortal();
-    //showValue(portalActual);
-    portalCoolDown = constrain(portalCoolDown-1, 0, 10);
-    if(portalActual>-1){
-      if(!portalCoolDown){
-        dest = portals[portalActual][3];
+    drawMap(level.currentLevel);
+    player.update();
+    player.currentPortal = inPortal();
+    //showValue(player.currentPortal);
+    level.portalCoolDown = constrain(level.portalCoolDown-1, 0, 10);
+    if(player.currentPortal>-1){
+      if(!level.portalCoolDown){
+        dest = portals[player.currentPortal][3];
         player.vx = 1.1*player.vx;
         if(portals[ dest ][2]==1){//NORMAL
-          player.x = portals[ dest ][0] + portals[ portalActual ][0]-player.x;
-          player.y = portals[ dest ][1] + portals[ portalActual ][1]-player.y;
+          player.x = portals[ dest ][0] + portals[ player.currentPortal ][0]-player.x;
+          player.y = portals[ dest ][1] + portals[ player.currentPortal ][1]-player.y;
           player.vy = 1*player.oldvy;
         }
         if(portals[ dest ][2]==2){//INVIERTE VERTICAL
@@ -77,30 +67,30 @@ void loop()
           player.vy = -1*player.oldvy;
         }
         if(portals[ dest ][2]==6){//MOVIL HORIZONTAL
-          player.x = portals[ dest ][0] + portals[ portalActual ][0]-player.x;
-          player.y = portals[ dest ][1] + portals[ portalActual ][1]-player.y;
+          player.x = portals[ dest ][0] + portals[ player.currentPortal ][0]-player.x;
+          player.y = portals[ dest ][1] + portals[ player.currentPortal ][1]-player.y;
           player.vy = 1*player.oldvy;
         }
-        portalCoolDown = 10;
+        level.portalCoolDown = 10;
         
       }
     }
     
     if(inKey()){
-      keyTaken=true;
+      level.keyTaken=true;
     }
     if(inDoor()){
       arduboy.clear();
       resetPortals();
-      level+=1;
-      loadMap(level);
-      keyTaken=false;
-      openDoor = false;
+      level.currentLevel+=1;
+      loadMap(level.currentLevel);
+      level.keyTaken=false;
+      level.openDoor = false;
       arduboy.setCursor(30,30);
       arduboy.println("LEVEL CLEARED");
       arduboy.display();
       arduboy.delayShort(3000);
-      if(level==finalLevel){
+      if(level.currentLevel==LASTLEVEL){
         arduboy.clear();
         arduboy.setCursor(33,30);
         arduboy.println("THE END");
@@ -109,30 +99,12 @@ void loop()
         gameState=GameState::MainMenu;
       }
     }
-    
-    if(arduboy.pressed(LEFT_BUTTON)){
-      player.vx -= player.ax;
-    }
-    if(arduboy.pressed(RIGHT_BUTTON)){
-      player.vx += player.ax;
-    }
-    
-    if(arduboy.justPressed(UP_BUTTON) and player.onFloor){
-      player.vy = player.jump;
-      jumpCounter=1;
-    }
-    if(arduboy.pressed(UP_BUTTON)){
-      jumpCounter++;
-    }else{
-      jumpCounter=0;
-    }
-    player.vx = constrain(player.vx*0.6, -player.vmax, player.vmax);
-    if(player.vx<0.2 and player.vx>-0.2){
-      player.vx=0;
-    }
+    player.processInputs();
   }
   arduboy.display();
 }
+
+
 void showValue(float x){
   arduboy.setCursor(1,1);
   arduboy.setTextSize(1);
@@ -155,8 +127,8 @@ int inPortal(){
 
 bool inKey(){
   uint8_t m = 2;
-  if(keyTaken==false){
-    if(player.x>=key[0]-m and player.x<=key[0]+3+m and player.y>=key[1]-m and player.y<=key[1]+m+6){
+  if(level.keyTaken==false){
+    if(player.x>=level.key[0]-m and player.x<=level.key[0]+3+m and player.y>=level.key[1]-m and player.y<=level.key[1]+m+6){
       return true;
     }
   }
@@ -166,98 +138,12 @@ bool inKey(){
 
 bool inDoor(){
   uint8_t m = 2;
-  if(keyTaken==true){
-    if(player.x>=door[0]-m and player.x<=door[0]+7+m and player.y>=door[1]-m and player.y<=door[1]+m+8){
+  if(level.keyTaken==true){
+    if(player.x>=level.door[0]-m and player.x<=level.door[0]+7+m and player.y>=level.door[1]-m and player.y<=level.door[1]+m+8){
       return true;
     }
   }
   return false;
-}
-
-void tryMoveY(int dist){
-  while(dist!=0){
-    if(dist>0){
-      player.y = player.y + 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.y=player.y-1;
-        if(inPortal()==false){
-          player.vy=0;
-        }
-        break;
-      }
-      dist-=1;
-    }
-    if(dist<0){
-      player.y = player.y - 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.y=player.y+1;
-        if(inPortal()==false){
-          player.vy=0;
-        }
-        break;
-      }
-      dist+=1;
-    }
-  }
-}
-
-void tryMoveX(int dist){
-  while(dist!=0){
-    if(dist>0){
-      player.x = player.x + 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.x=player.x-1;
-        player.vx=0;
-        break;
-      }
-      dist-=1;
-    }
-    if(dist<0){
-      player.x = player.x - 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.x=player.x+1;
-        player.vx=0;
-        break;
-      }
-      dist+=1;
-    }
-  }
-}
-
-void moveP()
-{
-  
-  tryMoveX(player.vx);
-  tryMoveY(player.vy);
-  
-  if(arduboy.getPixel(player.x,player.y+1)==WHITE){
-    player.onFloor=true;
-    player.vy=player.vy/2;
-  }else{
-    player.onFloor=false;
-  }
-
-  if(!player.onFloor){
-    if(player.vy>-0.5 and player.vy<0.5){
-      player.vy = 0.5;
-    }
-    if(jumpCounter>1 and jumpCounter<16){
-      player.vy = player.vy+player.g*0.2;
-      //arduboy.print(player.vy);
-    }else{
-      player.vy = player.vy+player.g;
-    }
-  }
-
-  
-  
-}
-
-void updateP()
-{
-  arduboy.drawPixel(player.x,player.y,0);
-  moveP();
-  arduboy.drawPixel(player.x,player.y,1);
 }
 
 
@@ -285,10 +171,10 @@ void loadMap(int map){
   if(map==1){
     player.x=5;
     player.y=50;
-    key[0] = 50;
-    key[1] = 56;
-    door[0] = 100;
-    door[1] = 22;
+    level.key[0] = 50;
+    level.key[1] = 56;
+    level.door[0] = 100;
+    level.door[1] = 22;
     //Portal info
     portals[0][0]=110;//x
     portals[0][1]=55;//y
@@ -303,10 +189,10 @@ void loadMap(int map){
   if(map==2){
     player.x=20;
     player.y=50;
-    key[0] = 100;
-    key[1] = 22;
-    door[0] = 5;
-    door[1] = 56;
+    level.key[0] = 100;
+    level.key[1] = 22;
+    level.door[0] = 5;
+    level.door[1] = 56;
     portals[0][0]=110;
     portals[0][1]=55;
     portals[0][2]=1;//type
@@ -319,10 +205,10 @@ void loadMap(int map){
   if(map==3){
     player.x=5;
     player.y=15;
-    door[0] = 106;
-    door[1] = 22;
-    key[0] = 49;
-    key[1] = 30-7;
+    level.door[0] = 106;
+    level.door[1] = 22;
+    level.key[0] = 49;
+    level.key[1] = 30-7;
     portals[0][0]=80;
     portals[0][1]=55;
     portals[0][2]=1;//type
@@ -336,10 +222,10 @@ void loadMap(int map){
   if(map==4){
     player.x=5;
     player.y=15;
-    key[0] = 50;
-    key[1] = 26;
-    door[0] = 100;
-    door[1] = 55;
+    level.key[0] = 50;
+    level.key[1] = 26;
+    level.door[0] = 100;
+    level.door[1] = 55;
     portals[0][0]=50;
     portals[0][1]=15;
     portals[0][2]=1;//type
@@ -353,10 +239,10 @@ void loadMap(int map){
   if(map==5){
     player.x=5;
     player.y=55;
-    key[0] = 5;
-    key[1] = 15;
-    door[0] = 115;
-    door[1] = 15;
+    level.key[0] = 5;
+    level.key[1] = 15;
+    level.door[0] = 115;
+    level.door[1] = 15;
     portals[0][0]=90;
     portals[0][1]=15;
     portals[0][2]=1;//type
@@ -370,10 +256,10 @@ void loadMap(int map){
   if(map==6){
     player.x=5;
     player.y=55;
-    key[0] = 74;
-    key[1] = 20;
-    door[0] = 115;
-    door[1] = 55;
+    level.key[0] = 74;
+    level.key[1] = 20;
+    level.door[0] = 115;
+    level.door[1] = 55;
     portals[0][0]=74;
     portals[0][1]=45;
     portals[0][2]=1;//type
@@ -391,10 +277,10 @@ void loadMap(int map){
   if(map==7){
     player.x=5;
     player.y=15;
-    key[0] = 74;
-    key[1] = 2;
-    door[0] = 115;
-    door[1] = 55;
+    level.key[0] = 74;
+    level.key[1] = 2;
+    level.door[0] = 115;
+    level.door[1] = 55;
     portals[0][0]=10;
     portals[0][1]=10;
     portals[0][2]=1;//type
@@ -416,10 +302,10 @@ void loadMap(int map){
   if(map==8){
     player.x=10;
     player.y=20;
-    key[0] = 74;
-    key[1] = 2;
-    door[0] = 115;
-    door[1] = 55;
+    level.key[0] = 74;
+    level.key[1] = 2;
+    level.door[0] = 115;
+    level.door[1] = 55;
     portals[0][0]=10;
     portals[0][1]=10;
     portals[0][2]=1;//type
@@ -441,10 +327,10 @@ void loadMap(int map){
   if(map==9){
     player.x=10;
     player.y=20;
-    key[0] = 85;
-    key[1] = 2;
-    door[0] = 115;
-    door[1] = 55;
+    level.key[0] = 85;
+    level.key[1] = 2;
+    level.door[0] = 115;
+    level.door[1] = 55;
     portals[0][0]=10;
     portals[0][1]=10;
     portals[0][2]=1;//type
@@ -478,10 +364,10 @@ void loadMap(int map){
   if(map==10){
     player.x=124;
     player.y=55;
-    key[0] = 50;
-    key[1] = 56;
-    door[0] = 100;
-    door[1] = 22;
+    level.key[0] = 50;
+    level.key[1] = 56;
+    level.door[0] = 100;
+    level.door[1] = 22;
     //Portal info
     portals[0][0]=65;//x
     portals[0][1]=5;//y
@@ -498,10 +384,10 @@ void loadMap(int map){
   if(map==11){
     player.x=124;
     player.y=55;
-    key[0] = 85;
-    key[1] = 22;
-    door[0] = 10;
-    door[1] = 22;
+    level.key[0] = 85;
+    level.key[1] = 22;
+    level.door[0] = 10;
+    level.door[1] = 22;
     //Portal info
     portals[0][0]=75;//x
     portals[0][1]=5;//y
@@ -610,16 +496,16 @@ void drawElements(){
     }
   
     //door
-    arduboy.drawRect(door[0], door[1], 7,9, WHITE);
-    if(!keyTaken){
-    arduboy.fillRect(door[0], door[1], 7,9, WHITE);
-    arduboy.drawLine(door[0]+3, door[1]+3,door[0]+5,door[1]+3, BLACK);
+    arduboy.drawRect(level.door[0], level.door[1], 7,9, WHITE);
+    if(!level.keyTaken){
+    arduboy.fillRect(level.door[0], level.door[1], 7,9, WHITE);
+    arduboy.drawLine(level.door[0]+3, level.door[1]+3,level.door[0]+5,level.door[1]+3, BLACK);
     }
     //key
-    if(!keyTaken){
-    arduboy.drawRect(key[0], key[1]+3, 3,3, WHITE);
-    arduboy.drawLine(key[0]+1, key[1], key[0]+1, key[1]+3, WHITE);
-    arduboy.drawLine(key[0], key[1], key[0]+1, key[1], WHITE);
+    if(!level.keyTaken){
+    arduboy.drawRect(level.key[0], level.key[1]+3, 3,3, WHITE);
+    arduboy.drawLine(level.key[0]+1, level.key[1], level.key[0]+1, level.key[1]+3, WHITE);
+    arduboy.drawLine(level.key[0], level.key[1], level.key[0]+1, level.key[1], WHITE);
     }
     
 }

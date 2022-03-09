@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduboy2.h>
-#include <ArduboyTones.h>
 
 class Player
 {
@@ -12,11 +11,17 @@ public:
   float vy = 0;
   float oldvy = 0;
   bool onFloor = false;
+  int currentPortal = -1;
   float ax = 1;
   float vmax = 2;
   float jump = -2;
   float g = 0.3;
+  uint8_t jumpCounter=0;
 
 public:
+  void processInputs();
   void move();
+  void update();
+  void tryMoveX(int dist);
+  void tryMoveY(int dist);
 };
