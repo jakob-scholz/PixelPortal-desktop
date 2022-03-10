@@ -24,4 +24,6 @@ public:
   void update();
   void tryMoveX(int dist);
   void tryMoveY(int dist);
+  void jumpPortals();
+  int inPortal();
 };

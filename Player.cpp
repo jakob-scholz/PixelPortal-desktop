@@ -28,7 +28,8 @@ void Player::processInputs()
 }
 void Player::update()
 {
-  player.oldvy=player.vy;
+  this->currentPortal = this->inPortal();
+  this->oldvy=this->vy;
   arduboy.drawPixel(this->x,this->y,0);
   this->move();
   arduboy.drawPixel(this->x,this->y,1);
@@ -36,25 +37,25 @@ void Player::update()
 }
 void Player::move()
 {
-  this->tryMoveX(player.vx);
-  this->tryMoveY(player.vy);
+  this->tryMoveX(this->vx);
+  this->tryMoveY(this->vy);
   
-  if(arduboy.getPixel(player.x,player.y+1)==WHITE){
-    player.onFloor=true;
-    player.vy=player.vy/2;
+  if(arduboy.getPixel(this->x,this->y+1)==WHITE){
+    this->onFloor=true;
+    this->vy=this->vy/2;
   }else{
-    player.onFloor=false;
+    this->onFloor=false;
   }
 
-  if(!player.onFloor){
-    if(player.vy>-0.5 and player.vy<0.5){
-      player.vy = 0.5;
+  if(!this->onFloor){
+    if(this->vy>-0.5 and this->vy<0.5){
+      this->vy = 0.5;
     }
-    if(player.jumpCounter>1 and player.jumpCounter<16){
-      player.vy = player.vy+player.g*0.2;
-      //arduboy.print(player.vy);
+    if(this->jumpCounter>1 and this->jumpCounter<16){
+      this->vy = this->vy+this->g*0.2;
+      //arduboy.print(this->vy);
     }else{
-      player.vy = player.vy+player.g;
+      this->vy = this->vy+this->g;
     }
   }
 }
@@ -62,19 +63,19 @@ void Player::move()
 void Player::tryMoveX(int dist){
   while(dist!=0){
     if(dist>0){
-      player.x = player.x + 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.x=player.x-1;
-        player.vx=0;
+      this->x = this->x + 1;
+      if(arduboy.getPixel(this->x,this->y)==WHITE){
+        this->x=this->x-1;
+        this->vx=0;
         break;
       }
       dist-=1;
     }
     if(dist<0){
-      player.x = player.x - 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.x=player.x+1;
-        player.vx=0;
+      this->x = this->x - 1;
+      if(arduboy.getPixel(this->x,this->y)==WHITE){
+        this->x=this->x+1;
+        this->vx=0;
         break;
       }
       dist+=1;
@@ -85,26 +86,56 @@ void Player::tryMoveX(int dist){
 void Player::tryMoveY(int dist){
   while(dist!=0){
     if(dist>0){
-      player.y = player.y + 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.y=player.y-1;
+      this->y = this->y + 1;
+      if(arduboy.getPixel(this->x,this->y)==WHITE){
+        this->y=this->y-1;
         if(this->currentPortal==-1){
-          player.vy=0;
+          this->vy=0;
         }
         break;
       }
       dist-=1;
     }
     if(dist<0){
-      player.y = player.y - 1;
-      if(arduboy.getPixel(player.x,player.y)==WHITE){
-        player.y=player.y+1;
+      this->y = this->y - 1;
+      if(arduboy.getPixel(this->x,this->y)==WHITE){
+        this->y=this->y+1;
         if(this->currentPortal==-1){
-          player.vy=0;
+          this->vy=0;
         }
         break;
       }
       dist+=1;
     }
   }
+}
+
+
+void Player::jumpPortals(){
+  int dest = level.portals2[this->currentPortal]->destination;
+  this->vx = 1.1*this->vx;
+  if(level.portals2[ dest ]->type==PortalType::Normal){
+    this->x = level.portals2[ dest ]->x + level.portals2[ this->currentPortal ]->x-this->x;
+    this->y = level.portals2[ dest ]->y + level.portals2[ this->currentPortal ]->y-this->y;
+    this->vy = 1*this->oldvy;
+  }
+  if(level.portals2[ dest ]->type==PortalType::InvertV){
+    this->x = level.portals2[ dest ]->x;
+    this->y = level.portals2[ dest ]->y;
+    this->vy = -1*this->oldvy;
+  }
+  level.portalCoolDown = 10;   
+}
+
+
+int Player::inPortal(){
+  uint8_t m = 2;
+  for(uint8_t i=0; i<8;i++){
+    if(level.portals2[i]->type!=PortalType::Inactive){
+      if(this->x>=level.portals2[i]->x-2-m and this->x<=level.portals2[i]->x+m+2 and this->y>=level.portals2[i]->y-2-m and this->y<=level.portals2[i]->y+m+2){
+        return i;
+      }
+    }
+  }
+  return -1;
 }
