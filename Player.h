@@ -2,8 +2,7 @@
 
 #include <Arduboy2.h>
 
-class Player
-{
+class Player{
 public:
   float x = 5;
   float y = 5;
@@ -17,6 +16,7 @@ public:
   float jump = -2;
   float g = 0.3;
   uint8_t jumpCounter=0;
+  uint8_t portalCoolDown = 0;
 
 public:
   void processInputs();
@@ -26,4 +26,6 @@ public:
   void tryMoveY(int dist);
   void jumpPortals();
   int inPortal();
+  bool touchingKey();
+  bool touchingDoor();
 };

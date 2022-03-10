@@ -3,8 +3,29 @@
 #include <Arduboy2.h>
 #include "Globals.h"
 
-void Player::processInputs()
-{
+void Player::update(){
+  
+  this->currentPortal = this->inPortal();
+  this->oldvy=this->vy;
+  arduboy.drawPixel(this->x,this->y,0);
+  this->move();
+  arduboy.drawPixel(this->x,this->y,1);
+  this->portalCoolDown = constrain(this->portalCoolDown-1, 0, 10);
+
+  //If enter a portal
+  if(this->currentPortal>-1){
+    if(!this->portalCoolDown){
+      this->jumpPortals();
+    }
+  }
+
+  //If touching the key
+  if(this->touchingKey()){
+    level.keyTaken=true;
+  }
+}
+void Player::processInputs(){
+  
     if(arduboy.pressed(LEFT_BUTTON)){
       this->vx -= this->ax;
     }
@@ -26,17 +47,8 @@ void Player::processInputs()
       this->vx=0;
     }
 }
-void Player::update()
-{
-  this->currentPortal = this->inPortal();
-  this->oldvy=this->vy;
-  arduboy.drawPixel(this->x,this->y,0);
-  this->move();
-  arduboy.drawPixel(this->x,this->y,1);
-
-}
-void Player::move()
-{
+void Player::move(){
+  
   this->tryMoveX(this->vx);
   this->tryMoveY(this->vy);
   
@@ -61,6 +73,7 @@ void Player::move()
 }
 
 void Player::tryMoveX(int dist){
+  
   while(dist!=0){
     if(dist>0){
       this->x = this->x + 1;
@@ -124,7 +137,7 @@ void Player::jumpPortals(){
     this->y = level.portals2[ dest ]->y;
     this->vy = -1*this->oldvy;
   }
-  level.portalCoolDown = 10;   
+  this->portalCoolDown = 10;   
 }
 
 
@@ -138,4 +151,25 @@ int Player::inPortal(){
     }
   }
   return -1;
+}
+
+
+bool Player::touchingKey(){
+  uint8_t m = 2;
+  if(level.keyTaken==false){
+    if(this->x>=level.key[0]-m and this->x<=level.key[0]+3+m and this->y>=level.key[1]-m and this->y<=level.key[1]+m+6){
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Player::touchingDoor(){
+  uint8_t m = 2;
+  if(level.keyTaken==true){
+    if(this->x>=level.door[0]-m and this->x<=level.door[0]+7+m and this->y>=level.door[1]-m and this->y<=level.door[1]+m+8){
+      return true;
+    }
+  }
+  return false;
 }

@@ -3,11 +3,13 @@
 #include <Arduboy2.h>
 #include "Globals.h"
 
-void Level::resetPortals()
+void Level::resetLevel()
 {
   for (int i = 0; i<8 ; i++){
       this->portals2[i] -> resetPortal();
   }
+  level.keyTaken=false;
+  level.openDoor = false;
 }
 
 void Level::loadLevel()

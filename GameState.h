@@ -5,5 +5,5 @@ enum class GameState : uint8_t
   Game,
   Init,
   NextLevel,
-  Dead
+  EndGame
 };
