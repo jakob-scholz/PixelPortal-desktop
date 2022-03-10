@@ -13,7 +13,7 @@ public:
   int currentPortal = -1;
   float ax = 1;
   float vmax = 2;
-  float jump = -2;
+  float jump = -2.3;
   float g = 0.3;
   uint8_t jumpCounter=0;
   uint8_t portalCoolDown = 0;
