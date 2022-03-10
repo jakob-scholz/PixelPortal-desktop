@@ -14,8 +14,18 @@ void Level::resetLevel()
 
 void Level::loadLevel()
 {
-  uint8_t levelN = this->currentLevel;
-  if(levelN==1){
+  if(this->currentLevel==1){
+    /*
+     * |--------------------------------
+     * |                                |
+     * |                                |
+     * |  1                        E   |
+     * |--------------------------------|
+     * |                                |
+     * |                                |
+     * |  P           K            0    |
+     * |--------------------------------
+     */
     player.x=5;
     player.y=50;
     this->key[0] = 50;
@@ -33,7 +43,18 @@ void Level::loadLevel()
     this->portals2[1]->destination=0;
     
   }
-  if(levelN==2){
+  if(this->currentLevel==2){
+    /*
+     * |--------------------------------
+     * |                                |
+     * |                                |
+     * |  1                        K   |
+     * |--------------------------------|
+     * |                                |
+     * |                                |
+     * |  E           P            0    |
+     * |--------------------------------
+     */
     player.x=20;
     player.y=50;
     this->key[0] = 100;
@@ -49,7 +70,18 @@ void Level::loadLevel()
     this->portals2[1]->type=PortalType::Normal;
     this->portals2[1]->destination=0;
   }
-  if(levelN==3){
+  if(this->currentLevel==3){
+    /*
+     * |--------------------------------
+     * |                                |
+     * |                     1          |
+     * |            K               E   |
+     * |           ---             ---  |
+     * |                                |
+     * |                                |
+     * |                     0          |
+     * |--------------------------------
+     */
     player.x=5;
     player.y=15;
     this->door[0] = 106;
@@ -66,7 +98,18 @@ void Level::loadLevel()
     this->portals2[1]->destination=0;
   }
 
-  if(levelN==4){
+  if(this->currentLevel==4){
+    /*
+     * |--------------------------------
+     * |                                |
+     * |            1                   |
+     * |            K                   |
+     * |                                |
+     * |                                |
+     * |                                |
+     * |   P        0               E   |
+     * |--------------------------------
+     */
     player.x=5;
     player.y=15;
     this->key[0] = 50;
@@ -83,7 +126,18 @@ void Level::loadLevel()
     this->portals2[1]->destination=0;
   }
   
-  if(levelN==5){
+  if(this->currentLevel==5){
+    /*
+     * |--------------------------------
+     * |     1                          |
+     * |  K                 0           |
+     * |                             E  |
+     * |                       ---      |
+     * |                            --- |
+     * |                                |
+     * |                       ---      |
+     * |--------------------------------
+     */
     player.x=5;
     player.y=55;
     this->key[0] = 5;
@@ -100,7 +154,18 @@ void Level::loadLevel()
     this->portals2[1]->destination=0;
   }
   
-  if(levelN==6){
+  if(this->currentLevel==6){
+    /*
+     * |--------------------------------
+     * |     |                          |
+     * |  1  |                          |
+     * |-----             K             |
+     * |                                |
+     * |                  0             |
+     * |                                |
+     * |  P                         E   |
+     * |--------------------------------
+     */
     player.x=5;
     player.y=55;
     this->key[0] = 74;
@@ -121,7 +186,18 @@ void Level::loadLevel()
     this->portals2[1]->x=10;
     this->portals2[1]->y=12;
   }
-  if(levelN==7){
+  if(this->currentLevel==7){
+    /*
+     * |--------------------------------
+     * | 1                  K           |
+     * |-----                           |
+     * |                                |
+     * |                                |
+     * |                                |
+     * |                                |
+     * | 0  P    2          3        E  |
+     * |--------------------------------
+     */
     player.x=5;
     player.y=15;
     this->key[0] = 74;
@@ -146,7 +222,18 @@ void Level::loadLevel()
     this->portals2[3]->type=PortalType::InvertV;
     this->portals2[3]->destination=2;
   }
-  if(levelN==8){
+  if(this->currentLevel==8){
+    /*
+     * |--------------------------------
+     * |   1                K           |
+     * |                                |
+     * |                                |
+     * |   P                            |
+     * |                                |
+     * |                                |
+     * |   0     2          3       E   |
+     * |--------------------------------
+     */
     player.x=10;
     player.y=20;
     this->key[0] = 74;
@@ -171,7 +258,18 @@ void Level::loadLevel()
     this->portals2[3]->type=PortalType::InvertV;
     this->portals2[3]->destination=2;
   }
-  if(levelN==9){
+  if(this->currentLevel==9){
+    /*
+     * |--------------------------------
+     * | 1                K             |
+     * |-----                           |
+     * |                                |
+     * |                                |
+     * |                                |
+     * |                                |
+     * | 0    2   3   4   5   6     E   |
+     * |--------------------------------
+     */
     player.x=17;
     player.y=5;
     this->key[0] = 85;
@@ -208,7 +306,18 @@ void Level::loadLevel()
     this->portals2[6]->type=PortalType::InvertV;
     this->portals2[6]->destination=3;
   }
-  if(levelN==10){
+  if(this->currentLevel==10){
+    /*
+     * |--------------------------------
+     * |               [  ~   1  ~   ]  |
+     * |                                |
+     * |                          E     |
+     * |                                |
+     * |                                |
+     * |                                |
+     * | 0        K                  P  |
+     * |--------------------------------
+     */
     player.x=124;
     player.y=55;
     this->key[0] = 50;
@@ -228,7 +337,18 @@ void Level::loadLevel()
     this->portals2[1]->destination=0;
     
   }
-  if(levelN==11){
+  if(this->currentLevel==11){
+    /*
+     * |--------------------------------
+     * | [  ~   1  ~   ]| [  ~   3  ~  ]|
+     * |                |               |
+     * |   E            |               |
+     * |                |               |
+     * |                |               |
+     * |                |               |
+     * |   2            |       0       |
+     * |--------------------------------
+     */
     player.x=124;
     player.y=55;
     this->key[0] = 85;
@@ -307,18 +427,17 @@ void Level::drawWalls(){
   //Screen Borders
   arduboy.drawRect (0, 0, 128, 64, WHITE);
     
-  int levelN = level.currentLevel;
-  if(levelN==1){
+  if(this->currentLevel==1){
     //Walls
     arduboy.fillRect (0, 30, 128, 2, WHITE);
   }
   
-  if(levelN==2){
+  if(this->currentLevel==2){
     //Walls
     arduboy.fillRect (0, 30, 128, 2, WHITE);
   }
   
-  if(levelN==3){
+  if(this->currentLevel==3){
     
     //Walls
     arduboy.fillRect (104, 30, 12, 3, WHITE);
@@ -326,38 +445,38 @@ void Level::drawWalls(){
     
   }
 
-  if(levelN==4){
+  if(this->currentLevel==4){
     //Walls
     //arduboy.fillRect (104, 30, 12, 3, WHITE);
   }
   
-  if(levelN==5){
+  if(this->currentLevel==5){
     //Walls
     arduboy.fillRect (105, 30, 12, 3, WHITE);
     arduboy.fillRect (115, 45, 12, 3, WHITE);
     arduboy.fillRect (95, 55, 12, 3, WHITE);
   }
   
-  if(levelN==6){
+  if(this->currentLevel==6){
     //Walls
     arduboy.fillRect (0, 20, 20, 3, WHITE);
     arduboy.fillRect (20, 0, 3, 20, WHITE);
   }
-  if(levelN==7){
+  if(this->currentLevel==7){
     //Walls
     arduboy.fillRect (0, 20, 25, 3, WHITE);
   }
-  if(levelN==8){
+  if(this->currentLevel==8){
     //Walls
   }
-  if(levelN==9){
+  if(this->currentLevel==9){
     //Walls
     arduboy.fillRect (0, 20, 20, 3, WHITE);
   }
-  if(levelN==10){
+  if(this->currentLevel==10){
     //Walls
   }
-  if(levelN==11){
+  if(this->currentLevel==11){
     //Walls
     arduboy.fillRect (64, 0, 3, 64, WHITE);
   }
