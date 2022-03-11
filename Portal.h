@@ -6,8 +6,6 @@
 class Portal
 {
 public:
-  uint8_t data[8] = { 0, 0, 0, 0, 0, 0 };
-  bool active = false;
   uint8_t x = 0;
   uint8_t y = 0;
   PortalType type = PortalType::Inactive;
@@ -19,4 +17,5 @@ public:
 
 public:
   void resetPortal();
+  void setPortal(uint8_t x, uint8_t y, PortalType type,uint8_t destination,uint8_t motion,uint8_t distance,uint8_t wave);
 };

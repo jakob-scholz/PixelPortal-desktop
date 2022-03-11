@@ -2,6 +2,7 @@
 
 #include <Arduboy2.h>
 #include "Portal.h"
+#include "Wall.h"
 
 class Level
 {
@@ -9,7 +10,9 @@ public:
 
   uint8_t currentLevel = 1;
 
-  Portal *portals2[8] = {new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal()};
+  Portal *portals[12] = {new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal()};
+
+  Wall *walls[12] = {new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall()};
 
   uint8_t playerInitialPosition[2] = {0,0};
   

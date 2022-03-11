@@ -14,7 +14,7 @@ void Player::update(){
 
   //If enter a portal
   if(this->currentPortal>-1){
-    if(!this->portalCoolDown){
+    if(this->portalCoolDown==0){
       this->jumpPortals();
     }
   }
@@ -52,7 +52,7 @@ void Player::move(){
   this->tryMoveX(this->vx);
   this->tryMoveY(this->vy);
   
-  if(arduboy.getPixel(this->x,this->y+1)==WHITE){
+  if(arduboy.getPixel(this->x,this->y+1)==WHITE and this->currentPortal==-1){
     this->onFloor=true;
     this->vy=this->vy/2;
   }else{
@@ -125,16 +125,16 @@ void Player::tryMoveY(int dist){
 
 
 void Player::jumpPortals(){
-  int dest = level.portals2[this->currentPortal]->destination;
+  int dest = level.portals[this->currentPortal]->destination;
   this->vx = 1.1*this->vx;
-  if(level.portals2[ dest ]->type==PortalType::Normal){
-    this->x = level.portals2[ dest ]->x + level.portals2[ this->currentPortal ]->x-this->x;
-    this->y = level.portals2[ dest ]->y + level.portals2[ this->currentPortal ]->y-this->y;
+  if(level.portals[ dest ]->type==PortalType::Normal){
+    this->x = level.portals[ dest ]->x + level.portals[ this->currentPortal ]->x-this->x;
+    this->y = level.portals[ dest ]->y + level.portals[ this->currentPortal ]->y-this->y;
     this->vy = 1*this->oldvy;
   }
-  if(level.portals2[ dest ]->type==PortalType::InvertV){
-    this->x = level.portals2[ dest ]->x;
-    this->y = level.portals2[ dest ]->y;
+  if(level.portals[ dest ]->type==PortalType::InvertV){
+    this->x = level.portals[ dest ]->x-(level.portals[ this->currentPortal ]->x-this->x);
+    this->y = level.portals[ dest ]->y-(level.portals[ this->currentPortal ]->y-this->y);
     this->vy = -1*this->oldvy;
   }
   this->portalCoolDown = 10;   
@@ -143,9 +143,9 @@ void Player::jumpPortals(){
 
 int Player::inPortal(){
   uint8_t m = 2;
-  for(uint8_t i=0; i<8;i++){
-    if(level.portals2[i]->type!=PortalType::Inactive){
-      if(this->x>=level.portals2[i]->x-2-m and this->x<=level.portals2[i]->x+m+2 and this->y>=level.portals2[i]->y-2-m and this->y<=level.portals2[i]->y+m+2){
+  for(uint8_t i=0; i<12;i++){
+    if(level.portals[i]->type!=PortalType::Inactive){
+      if(this->x>=level.portals[i]->x-2-m and this->x<=level.portals[i]->x+m+2 and this->y>=level.portals[i]->y-2-m and this->y<=level.portals[i]->y+m+2){
         return i;
       }
     }
