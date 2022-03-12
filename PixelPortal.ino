@@ -23,7 +23,7 @@ void loop(){
     titleScreen();
     if(arduboy.justPressed(A_BUTTON) or arduboy.justPressed(UP_BUTTON)){
       gameState=GameState::Game;
-      level.currentLevel = 14;
+      level.currentLevel = 1;
       level.loadLevel();
       arduboy.clear();
     }

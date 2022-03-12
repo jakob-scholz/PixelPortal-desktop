@@ -7,7 +7,7 @@
 #include "Level.h"
 
 const uint8_t fps = 30;
-const uint8_t LASTLEVEL = 13;
+const uint8_t LASTLEVEL = 14;
 
 extern Arduboy2 arduboy;
 

@@ -5,7 +5,6 @@
 
 void Player::update(){
   
-  this->currentPortal = this->inPortal();
   this->oldvy=this->vy;
   arduboy.drawPixel(this->x,this->y,0);
   this->move();
@@ -51,6 +50,8 @@ void Player::move(){
   
   this->tryMoveX(this->vx);
   this->tryMoveY(this->vy);
+  
+  this->currentPortal = this->inPortal();
   
   if(arduboy.getPixel(this->x,this->y+1)==WHITE and this->currentPortal==-1){
     this->onFloor=true;
