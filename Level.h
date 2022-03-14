@@ -10,9 +10,9 @@ public:
 
   uint8_t currentLevel = 1;
 
-  Portal *portals[12] = {new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal(),new Portal()};
+  Portal portals[12] {};
 
-  Wall *walls[12] = {new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall(),new Wall()};
+  Wall walls[12] {};
 
   uint8_t playerInitialPosition[2] = {0,0};
   

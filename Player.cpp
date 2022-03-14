@@ -126,16 +126,16 @@ void Player::tryMoveY(int dist){
 
 
 void Player::jumpPortals(){
-  int dest = level.portals[this->currentPortal]->destination;
+  int dest = level.portals[this->currentPortal].destination;
   this->vx = 1.1*this->vx;
-  if(level.portals[ dest ]->type==PortalType::Normal){
-    this->x = level.portals[ dest ]->x + level.portals[ this->currentPortal ]->x-this->x;
-    this->y = level.portals[ dest ]->y + level.portals[ this->currentPortal ]->y-this->y;
+  if(level.portals[ dest ].type==PortalType::Normal){
+    this->x = level.portals[ dest ].x + level.portals[ this->currentPortal ].x-this->x;
+    this->y = level.portals[ dest ].y + level.portals[ this->currentPortal ].y-this->y;
     this->vy = 1*this->oldvy;
   }
-  if(level.portals[ dest ]->type==PortalType::InvertV){
-    this->x = level.portals[ dest ]->x-(level.portals[ this->currentPortal ]->x-this->x);
-    this->y = level.portals[ dest ]->y-(level.portals[ this->currentPortal ]->y-this->y);
+  if(level.portals[ dest ].type==PortalType::InvertV){
+    this->x = level.portals[ dest ].x-(level.portals[ this->currentPortal ].x-this->x);
+    this->y = level.portals[ dest ].y-(level.portals[ this->currentPortal ].y-this->y);
     this->vy = -1*this->oldvy;
   }
   this->portalCoolDown = 10;   
@@ -145,8 +145,8 @@ void Player::jumpPortals(){
 int Player::inPortal(){
   uint8_t m = 2;
   for(uint8_t i=0; i<12;i++){
-    if(level.portals[i]->type!=PortalType::Inactive){
-      if(this->x>=level.portals[i]->x-2-m and this->x<=level.portals[i]->x+m+2 and this->y>=level.portals[i]->y-2-m and this->y<=level.portals[i]->y+m+2){
+    if(level.portals[i].type!=PortalType::Inactive){
+      if(this->x>=level.portals[i].x-2-m and this->x<=level.portals[i].x+m+2 and this->y>=level.portals[i].y-2-m and this->y<=level.portals[i].y+m+2){
         return i;
       }
     }
