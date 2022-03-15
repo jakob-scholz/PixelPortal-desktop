@@ -14,7 +14,8 @@ void Player::update(){
   //If enter a portal
   if(this->currentPortal>-1){
     if(this->portalCoolDown==0){
-      this->jumpPortals();
+      uint8_t dest = level.portals[this->currentPortal].destination;
+      this->jumpPortals(dest);
     }
   }
 
@@ -52,7 +53,6 @@ void Player::move(){
   this->tryMoveY(this->vy);
   
   this->currentPortal = this->inPortal();
-  
   if(arduboy.getPixel(this->x,this->y+1)==WHITE and this->currentPortal==-1){
     this->onFloor=true;
     this->vy=this->vy/2;
@@ -66,19 +66,21 @@ void Player::move(){
     }
     if(this->jumpCounter>1 and this->jumpCounter<16){
       this->vy = this->vy+this->g*0.2;
-      //arduboy.print(this->vy);
     }else{
       this->vy = this->vy+this->g;
     }
   }
+  if(this->y>70){
+    this->jumpPortals(0);
+  }
 }
 
 void Player::tryMoveX(int dist){
-  
+  this->currentPortal = this->inPortal();
   while(dist!=0){
     if(dist>0){
       this->x = this->x + 1;
-      if(arduboy.getPixel(this->x,this->y)==WHITE){
+      if(arduboy.getPixel(this->x,this->y)==WHITE and this->currentPortal==-1){
         this->x=this->x-1;
         this->vx=0;
         break;
@@ -87,7 +89,7 @@ void Player::tryMoveX(int dist){
     }
     if(dist<0){
       this->x = this->x - 1;
-      if(arduboy.getPixel(this->x,this->y)==WHITE){
+      if(arduboy.getPixel(this->x,this->y)==WHITE and this->currentPortal==-1){
         this->x=this->x+1;
         this->vx=0;
         break;
@@ -101,7 +103,7 @@ void Player::tryMoveY(int dist){
   while(dist!=0){
     if(dist>0){
       this->y = this->y + 1;
-      if(arduboy.getPixel(this->x,this->y)==WHITE){
+      if(arduboy.getPixel(this->x,this->y)==WHITE and this->currentPortal==-1){
         this->y=this->y-1;
         if(this->currentPortal==-1){
           this->vy=0;
@@ -112,7 +114,7 @@ void Player::tryMoveY(int dist){
     }
     if(dist<0){
       this->y = this->y - 1;
-      if(arduboy.getPixel(this->x,this->y)==WHITE){
+      if(arduboy.getPixel(this->x,this->y)==WHITE and this->currentPortal==-1){
         this->y=this->y+1;
         if(this->currentPortal==-1){
           this->vy=0;
@@ -125,17 +127,17 @@ void Player::tryMoveY(int dist){
 }
 
 
-void Player::jumpPortals(){
-  int dest = level.portals[this->currentPortal].destination;
+void Player::jumpPortals(uint8_t dest){
+  //int dest = level.portals[this->currentPortal].destination;
   this->vx = 1.1*this->vx;
   if(level.portals[ dest ].type==PortalType::Normal){
-    this->x = level.portals[ dest ].x + level.portals[ this->currentPortal ].x-this->x;
-    this->y = level.portals[ dest ].y + level.portals[ this->currentPortal ].y-this->y;
+    this->x = level.portals[ dest ].x;// + level.portals[ this->currentPortal ].x-this->x;
+    this->y = level.portals[ dest ].y;// + level.portals[ this->currentPortal ].y-this->y;
     this->vy = 1*this->oldvy;
   }
   if(level.portals[ dest ].type==PortalType::InvertV){
-    this->x = level.portals[ dest ].x-(level.portals[ this->currentPortal ].x-this->x);
-    this->y = level.portals[ dest ].y-(level.portals[ this->currentPortal ].y-this->y);
+    this->x = level.portals[ dest ].x;//-(level.portals[ this->currentPortal ].x-this->x);
+    this->y = level.portals[ dest ].y;//-(level.portals[ this->currentPortal ].y-this->y);
     this->vy = -1*this->oldvy;
   }
   this->portalCoolDown = 10;   

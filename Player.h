@@ -24,7 +24,7 @@ public:
   void update();
   void tryMoveX(int dist);
   void tryMoveY(int dist);
-  void jumpPortals();
+  void jumpPortals(uint8_t dest);
   int inPortal();
   bool touchingKey();
   bool touchingDoor();

@@ -22,7 +22,7 @@ public:
   uint8_t key[2] = { 0 , 0 };
   bool keyTaken = false;
 
-  uint8_t wave = 0;
+  bool border = true;
 
 public:
   void resetLevel();
