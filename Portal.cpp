@@ -1,6 +1,4 @@
 #include "Portal.h"
-
-#include <Arduboy2.h>
 #include "Globals.h"
 
 void Portal::resetPortal(){

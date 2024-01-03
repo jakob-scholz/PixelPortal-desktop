@@ -1,6 +1,5 @@
 #pragma once
-
-#include <Arduboy2.h>
+#include <cstdint>
 
 class Wall
 {

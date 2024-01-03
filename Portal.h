@@ -1,8 +1,5 @@
 #pragma once
-
-#include <Arduboy2.h>
 #include "PortalType.h"
-
 class Portal
 {
 public:

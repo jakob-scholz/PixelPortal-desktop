@@ -1,7 +1,5 @@
 #include "Wall.h"
-
-#include <Arduboy2.h>
-
+#include <iostream>
 void Wall::resetWall(){
   this->x = 0;
   this->y = 0;
@@ -14,4 +12,5 @@ void Wall::setWall(uint8_t x, uint8_t y, uint8_t w,uint8_t h){
   this->y = y;
   this->w = w;
   this->h = h;
+  std::cout << "setWall" << std::endl;
 }

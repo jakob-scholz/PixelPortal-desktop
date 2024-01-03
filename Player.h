@@ -1,7 +1,6 @@
 #pragma once
-
-#include <Arduboy2.h>
-
+#include<cstdint>
+#include<SFML/Graphics.hpp>
 class Player{
 public:
   float x = 5;
@@ -20,12 +19,14 @@ public:
 
 public:
   void processInputs();
-  void move();
-  void update();
+  void move(sf::RenderWindow* window);
+  void update(sf::RenderWindow* window);
   void tryMoveX(int dist);
   void tryMoveY(int dist);
   void jumpPortals(uint8_t dest);
   int inPortal();
   bool touchingKey();
   bool touchingDoor();
+  bool testBorder();
+  bool testDestination(int i);
 };

@@ -1,9 +1,7 @@
 #pragma once
-
-#include <Arduboy2.h>
 #include "Portal.h"
 #include "Wall.h"
-
+#include <SFML/Graphics.hpp>
 class Level
 {
 public:
@@ -27,7 +25,7 @@ public:
 public:
   void resetLevel();
   void loadLevel();
-  void drawLevel();
-  void drawElements();
-  void drawWalls();
+  void drawLevel(sf::RenderWindow* window);
+  void drawElements(sf::RenderWindow* window);
+  void drawWalls(sf::RenderWindow* window);
 };

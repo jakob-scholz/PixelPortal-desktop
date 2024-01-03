@@ -1,5 +1,6 @@
 #pragma once
-enum class GameState : uint8_t
+#include <cstdint>
+enum GameState : uint8_t
 {
   MainMenu,
   Game,
